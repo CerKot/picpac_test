@@ -1,0 +1,387 @@
+{
+  "retrieved": "2026-11-12",
+  "purpose": "Self-hosted on-device browser image segmentation and face detection; no photo uploads required.",
+  "sdk": {
+    "package": "@mediapipe/tasks-vision",
+    "version": "0.10.21",
+    "registry_metadata_url": "https://registry.npmjs.org/@mediapipe/tasks-vision/0.10.21",
+    "npm_tarball_integrity": "sha512-TuhKH+credq4zLksGbYrnvJ1aLIWMc5r0UHwzxzql4BHECJwIAoBR61ZrqwGOW6ZmSBIzU1t4VtKj8hbxFaKeA==",
+    "integrity_verified": true,
+    "license": "Apache-2.0"
+  },
+  "models": {
+    "selfie_segmenter.tflite": {
+      "name": "SelfieSegmenter square",
+      "model_revision": "float16/1",
+      "input_shape": [
+        1,
+        256,
+        256,
+        3
+      ],
+      "input_range": [
+        0,
+        1
+      ],
+      "output_shape": [
+        1,
+        256,
+        256,
+        1
+      ],
+      "embedded_labels": [
+        "selfie"
+      ],
+      "expected_person_confidence_mask_index": 0,
+      "confidence_index_evidence": "Read embedded labels.txt and actual model output tensor; v0.10.21 getLabels documentation maps indices to confidence masks. Runtime browser inference not executed by asset collector.",
+      "license": "Apache-2.0",
+      "license_evidence": "MODEL_CARD.pdf page 1"
+    },
+    "face_detector.tflite": {
+      "name": "BlazeFace short range",
+      "model_revision": "float16/1",
+      "input_shape": [
+        1,
+        128,
+        128,
+        3
+      ],
+      "input_range": [
+        -1,
+        1
+      ],
+      "output_shapes": [
+        [
+          1,
+          896,
+          16
+        ],
+        [
+          1,
+          896,
+          1
+        ]
+      ],
+      "license": "Apache-2.0",
+      "license_evidence": "FACE_MODEL_CARD.pdf page 1"
+    },
+    "face_landmarker.task": {
+      "name": "FaceLandmarker bundle",
+      "model_revision": "float16/1",
+      "license": "Apache-2.0",
+      "license_evidence": [
+        "FACE_MODEL_CARD.pdf page 1",
+        "FACE_LANDMARKER_MODEL_CARD.pdf page 1",
+        "BLENDSHAPE_MODEL_CARD.pdf page 1"
+      ],
+      "sdk_target": "@mediapipe/tasks-vision 0.10.21",
+      "verification": "Downloaded ZIP CRC verified; TFLite input/output shapes inspected directly. SDK exposes FaceLandmarker and documented options. Browser inference compatibility is to be verified by application owner.",
+      "components": [
+        {
+          "name": "face_detector.tflite",
+          "bytes": 229746,
+          "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f"
+        },
+        {
+          "name": "face_landmarks_detector.tflite",
+          "bytes": 2553590,
+          "sha256": "c7d54204ce0448474c7f3fa9af494787c0965cbdd6f20fc72867e43046bd43d5"
+        },
+        {
+          "name": "geometry_pipeline_metadata_landmarks.binarypb",
+          "bytes": 19376,
+          "sha256": "bdbcda96dfcb7da883da124aaa2c55dee49770d934f0fcc71747f8c21bdc75b4"
+        },
+        {
+          "name": "face_blendshapes.tflite",
+          "bytes": 955312,
+          "sha256": "4f36dded049db18d76048567439b2a7f58f1daabc00d78bfe8f3ad396a2d2082"
+        }
+      ],
+      "note": "The exact pinned bundle contains a 128x128 face detector. Prefer inspected tensor dimensions to generalized current overview table (192x192).",
+      "component_shapes": {
+        "face_detector.tflite": {
+          "inputs": [
+            [
+              1,
+              128,
+              128,
+              3
+            ]
+          ],
+          "outputs": [
+            [
+              1,
+              896,
+              16
+            ],
+            [
+              1,
+              896,
+              1
+            ]
+          ]
+        },
+        "face_landmarks_detector.tflite": {
+          "inputs": [
+            [
+              1,
+              256,
+              256,
+              3
+            ]
+          ],
+          "outputs": [
+            [
+              1,
+              1,
+              1,
+              1434
+            ],
+            [
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        "face_blendshapes.tflite": {
+          "inputs": [
+            [
+              1,
+              146,
+              2
+            ]
+          ],
+          "outputs": [
+            [
+              52
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "references": [
+    "https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter/web_js",
+    "https://ai.google.dev/edge/mediapipe/api/solutions/js/tasks-vision.imagesegmenter",
+    "https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/image_segmenter/calculators/tensors_to_segmentation_calculator.cc",
+    "https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/web/vision/face_landmarker/face_landmarker.ts",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/web/vision/face_landmarker/face_landmarks_connections.ts",
+    "https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_landmarker/face_blendshapes_graph.cc",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_geometry/libs/geometry_pipeline.cc",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/framework/formats/matrix.cc",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/framework/formats/matrix_data.proto",
+    "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_geometry/proto/face_geometry.proto",
+    "https://github.com/google-ai-edge/mediapipe/blob/v0.10.21/docs/solutions/face_mesh.md"
+  ],
+  "assets": [
+    {
+      "file": "vision_bundle.mjs",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 137735,
+      "sha256": "40f4123dfcd75cfa58add046919cc6f52fde66f009ff582997c09ba54c6ba27c",
+      "archive_member": "package/vision_bundle.mjs"
+    },
+    {
+      "file": "vision.d.ts",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 123366,
+      "sha256": "7f348fe19a71756057ba4358b7d13d3162e9400dc3965845c015145f53a0ab67",
+      "archive_member": "package/vision.d.ts"
+    },
+    {
+      "file": "package.json",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 592,
+      "sha256": "18e96c370b666f1f6b096c96255f19a4750522d207cff5dc721aeb4c4e4da701",
+      "archive_member": "package/package.json"
+    },
+    {
+      "file": "wasm/vision_wasm_internal.js",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 204284,
+      "sha256": "4a97e2520ba506c680ecd6ba6acfb146888afa0e2746d57f205352bc6ebb82eb",
+      "archive_member": "package/wasm/vision_wasm_internal.js"
+    },
+    {
+      "file": "wasm/vision_wasm_nosimd_internal.js",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 204137,
+      "sha256": "927def7b465c51b86e4b3060f93646aca4e27121f4b8fc0483786e407ea9cf1f",
+      "archive_member": "package/wasm/vision_wasm_nosimd_internal.js"
+    },
+    {
+      "file": "wasm/vision_wasm_internal.wasm",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 9574032,
+      "sha256": "f00ec4731faa23b3e714d00e88d4d10e2df5c0a427d3a2b4ae6e3526fdd14ef7",
+      "archive_member": "package/wasm/vision_wasm_internal.wasm"
+    },
+    {
+      "file": "wasm/vision_wasm_nosimd_internal.wasm",
+      "source": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.21.tgz",
+      "bytes": 9448638,
+      "sha256": "3821ea9b1f7fb8c549ef2a064ef5c85750bf375c545a49fd6eea0df44a95f1f4",
+      "archive_member": "package/wasm/vision_wasm_nosimd_internal.wasm"
+    },
+    {
+      "file": "selfie_segmenter.tflite",
+      "source": "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/1/selfie_segmenter.tflite",
+      "bytes": 249537,
+      "sha256": "191ac9529ae506ee0beefa6b2c945a172dab9d07d1e802a290a4e4038226658b"
+    },
+    {
+      "file": "face_detector.tflite",
+      "source": "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+      "bytes": 229746,
+      "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f"
+    },
+    {
+      "file": "LICENSE",
+      "source": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/LICENSE",
+      "bytes": 12331,
+      "sha256": "8707eef0533987efc5b155d64761eeb6e20793f50b9bd1a68dad1cf4719d0ed8"
+    },
+    {
+      "file": "MODEL_CARD.pdf",
+      "source": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf",
+      "bytes": 2286837,
+      "sha256": "ef2e8d350891ba71699ac1e079658e697fc8d48c0f9253922990e907ecdade60"
+    },
+    {
+      "file": "FACE_MODEL_CARD.pdf",
+      "source": "https://storage.googleapis.com/mediapipe-assets/MediaPipe%20BlazeFace%20Model%20Card%20%28Short%20Range%29.pdf",
+      "bytes": 434425,
+      "sha256": "cd335c06fc0de7807cd815a0777a697932598bcdb28fa98adaaabf847485f758"
+    },
+    {
+      "file": "face_landmarker.task",
+      "source": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+      "bytes": 3758596,
+      "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff"
+    },
+    {
+      "file": "FACE_LANDMARKER_MODEL_CARD.pdf",
+      "source": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Face%20Mesh%20V2.pdf",
+      "bytes": 3476420,
+      "sha256": "c6add060f4ebfb37b2690136b6c711c7e5fcb7038baa2649ae3338b83979565a"
+    },
+    {
+      "file": "BLENDSHAPE_MODEL_CARD.pdf",
+      "source": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Blendshape%20V2.pdf",
+      "bytes": 2324099,
+      "sha256": "c8e9cf60a39998f4b341740623917590e050d1c97004e2de4568d84e026445ae"
+    }
+  ],
+  "face_landmarker_integration": {
+    "references": {
+      "web_api": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js",
+      "js_0_10_21": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/web/vision/face_landmarker/face_landmarker.ts",
+      "connections": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/web/vision/face_landmarker/face_landmarks_connections.ts",
+      "landmark_map": "https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png",
+      "blendshape_names": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_landmarker/face_blendshapes_graph.cc",
+      "geometry_pipeline": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_geometry/libs/geometry_pipeline.cc",
+      "matrix_serialization": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/framework/formats/matrix.cc",
+      "matrix_proto": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/framework/formats/matrix_data.proto",
+      "geometry_proto": "https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/face_geometry/proto/face_geometry.proto",
+      "coordinate_space": "https://github.com/google-ai-edge/mediapipe/blob/v0.10.21/docs/solutions/face_mesh.md"
+    },
+    "cpu_image_example": "const {FaceLandmarker}=await import('./assets/mediapipe/vision_bundle.mjs'); const landmarker=await FaceLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'./assets/mediapipe/face_landmarker.task',delegate:'CPU'},runningMode:'IMAGE',numFaces:1,minFaceDetectionConfidence:0.5,minFacePresenceConfidence:0.5,minTrackingConfidence:0.5,outputFaceBlendshapes:true,outputFacialTransformationMatrixes:true}); const result=landmarker.detect(decodedImageOrCanvas);",
+    "video_example": "await landmarker.setOptions({runningMode:'VIDEO'}); // for each new decoded video frame only: const result=landmarker.detectForVideo(video,performance.now()); // strictly increasing timestamps in milliseconds; calls synchronous. Switch back with await landmarker.setOptions({runningMode:'IMAGE'}) before detect(still).",
+    "blendshape_example": "const scores=Object.fromEntries((result.faceBlendshapes[0]?.categories||[]).map(c=>[c.categoryName,c.score])); // scores.eyeBlinkLeft, eyeBlinkRight, jawOpen, mouthSmileLeft, mouthSmileRight; missing != zero",
+    "blendshape_keys": [
+      "eyeBlinkLeft",
+      "eyeBlinkRight",
+      "jawOpen",
+      "mouthSmileLeft",
+      "mouthSmileRight"
+    ],
+    "blendshape_indices_in_pinned_graph": {
+      "eyeBlinkLeft": 9,
+      "eyeBlinkRight": 10,
+      "jawOpen": 25,
+      "mouthSmileLeft": 44,
+      "mouthSmileRight": 45
+    },
+    "blendshape_semantics": "Expression coefficients [0,1], not calibrated probabilities. Use categoryName rather than positional indices. Left/right refer to subject; mirror only preview CSS, not inference pixels. Blink/jaw/smile thresholds require product validation; no universal legal threshold is provided.",
+    "landmark_indices": {
+      "right_eye_corners": [
+        33,
+        133
+      ],
+      "right_eye_vertical_lids": [
+        159,
+        145
+      ],
+      "right_iris_center": 468,
+      "left_eye_corners": [
+        263,
+        362
+      ],
+      "left_eye_vertical_lids": [
+        386,
+        374
+      ],
+      "left_iris_center": 473,
+      "nose_tip": 1,
+      "chin": 152,
+      "outer_mouth_corners": [
+        61,
+        291
+      ],
+      "inner_lip_centers": [
+        13,
+        14
+      ],
+      "forehead_face_oval_top": 10
+    },
+    "landmark_semantics": "Anatomical left/right. Landmarks x,y normalized by source width/height. Use source-pixel coordinates for distances and angles (multiply x by width, y by height). Point10 is forehead/face oval, NOT top of hair/head. Iris centers are not calibrated gaze targets.",
+    "matrix": {
+      "property": "result.facialTransformationMatrixes[0]",
+      "shape": [
+        4,
+        4
+      ],
+      "js_data_layout": "column-major",
+      "at_row_col": "data[column*4+row]",
+      "translation_indices": [
+        12,
+        13,
+        14
+      ],
+      "last_row_indices": [
+        3,
+        7,
+        11,
+        15
+      ],
+      "last_row_expected": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "mapping": "canonical face to observed/runtime metric face; includes uniform scale, rotation, translation",
+      "space": "Right-handed virtual-camera metric space; x right, y up, virtual camera points down negative z. Normalized screen landmarks instead have y downward. Matrix is not camera extrinsic calibration or physical head distance.",
+      "evidence": "geometry_pipeline.cc -> MatrixDataProtoFromMatrix; matrix.cc copies Eigen storage and clears layout; MatrixData default COLUMN_MAJOR; JS addFacialTransformationMatrixes copies packed data unchanged.",
+      "formal_euler_convention": "If explicitly defining R=Rz(roll)*Ry(yaw)*Rx(pitch) with column vectors and positive uniform scale: pitch=atan2(data[6],data[10]); yaw=atan2(-data[2],hypot(data[0],data[1])); roll=atan2(data[1],data[0]). Radians. This is a chosen mathematical decomposition, not a vendor-certified biometric pose metric. Degenerate/nonfinite matrices must yield unknown; avoid gimbal-lock region.",
+      "pose_guidance": "Use relative orientation magnitude as a UX hint after device testing; generic pitch prompt is safer than inferring whether the phone or head moved. Up/down reposition prompts can use source-frame face position. Validate sign with unmirrored inputs. Avoid claiming legal angular compliance or publishing uncalibrated exact degrees."
+    },
+    "operational_notes": [
+      "VIDEO can reuse tracking. Temporal smoothing is applied for numFaces=1. numFaces is a maximum, so numFaces=1 cannot prove exactly one person is present; retain a separate multi-face detector check.",
+      "The task calls are synchronous; throttle to available CPU throughput and avoid duplicate decoded frames. No paid API or image upload is needed.",
+      "Use source dimensions/object-fit crop and mirror transform consistently for overlay mapping. Close the task on disposal; stop camera stream separately.",
+      "For live UX, use temporal persistence/hysteresis and an unknown state for missing/unstable outputs. Thresholds and smoothing durations are product heuristics needing QA.",
+      "Do not interpret coefficients or mesh as proof of identity, liveness, directed gaze, eye visibility compliance, official biometric quality or acceptance probability. Head pose is relative to a virtual camera; cannot separate head and phone motion."
+    ]
+  }
+}

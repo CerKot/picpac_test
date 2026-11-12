@@ -1,0 +1,8 @@
+.qa/
+node_modules/
+outputs/
+api/.data/
+.env
+api/.env
+*.tar.gz
+*.zip

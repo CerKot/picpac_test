@@ -1,0 +1,137 @@
+{
+  "retrieved": "2026-11-12",
+  "source_page": "https://picpac.by",
+  "notes": {
+    "logo.svg": "Original inline SVG of header; viewBox XML casing restored after HTML parse; #DD5757 fill copied from actual site CSS. Paths unchanged.",
+    "fonts": "Original publicly served Futura PT WOFF2 files. Production embedding license must be confirmed by brand owner; brand identity alone is not a font license.",
+    "photos": "Original public product marketing assets. Template photos depict printed books; family-winter is a raw winter portrait. Demo use, not personal user gallery."
+  },
+  "assets": [
+    {
+      "file": "logo.svg",
+      "url": "https://picpac.by/",
+      "bytes": 3475
+    },
+    {
+      "file": "logo.png",
+      "url": "https://picpac.by/content/pxp-logo/6175..png?lid=7268&v=639295545000000000",
+      "bytes": 10418,
+      "dimensions": [
+        222,
+        115
+      ]
+    },
+    {
+      "file": "book-lite.png",
+      "url": "https://picpac.by/content/design/images/top-products/2026/0109/top1.png",
+      "bytes": 628635,
+      "dimensions": [
+        1080,
+        1080
+      ]
+    },
+    {
+      "file": "book-premium.png",
+      "url": "https://picpac.by/content/design/images/top-products/2026/0109/top2.png",
+      "bytes": 120760,
+      "dimensions": [
+        500,
+        500
+      ]
+    },
+    {
+      "file": "book-classic.png",
+      "url": "https://picpac.by/content/design/images/top-products/2026/0109/top3.png",
+      "bytes": 140058,
+      "dimensions": [
+        500,
+        500
+      ]
+    },
+    {
+      "file": "prints.jpg",
+      "url": "https://picpac.by/content/design/images/collage/photo/1a.jpg",
+      "bytes": 401187,
+      "dimensions": [
+        2025,
+        2025
+      ]
+    },
+    {
+      "file": "prints-detail.webp",
+      "url": "https://picpac.by/content/design/images/photos/description/IMG_4095.webp",
+      "bytes": 70446,
+      "dimensions": [
+        1290,
+        960
+      ]
+    },
+    {
+      "file": "family-winter.jpg",
+      "url": "https://picpac.by/content/design/images/news/idei-dlya-zimnej-semejnoj-fotosessii.jpg",
+      "bytes": 105827,
+      "dimensions": [
+        624,
+        812
+      ]
+    },
+    {
+      "file": "template-family.webp",
+      "url": "https://picpac.by/content/design/images/photobooks/temp/120624/rodit/1.webp",
+      "bytes": 161666,
+      "dimensions": [
+        1428,
+        1770
+      ]
+    },
+    {
+      "file": "template-travel.webp",
+      "url": "https://picpac.by/content/design/images/photobooks/temp/120624/travel/1.webp",
+      "bytes": 84290,
+      "dimensions": [
+        1428,
+        1770
+      ]
+    },
+    {
+      "file": "template-baby.webp",
+      "url": "https://picpac.by/content/design/images/photobooks/temp/120624/deti/1.webp",
+      "bytes": 188140,
+      "dimensions": [
+        1428,
+        1771
+      ]
+    },
+    {
+      "file": "futura-pt-400.woff2",
+      "url": "https://picpac.by/content/design/fonts/futura-pt-400.woff2",
+      "bytes": 30140,
+      "signature": "wOF2"
+    },
+    {
+      "file": "futura-pt-500.woff2",
+      "url": "https://picpac.by/content/design/fonts/futura-pt-500.woff2",
+      "bytes": 29444,
+      "signature": "wOF2"
+    }
+  ],
+  "font_weight_audit": {
+    "checked": "2026-11-12",
+    "confirmed_weights": [
+      400,
+      500
+    ],
+    "not_found_weights": [
+      600,
+      700
+    ],
+    "checked_stylesheets": [
+      "https://picpac.by/content/style.css?v=FBE74030086B61A3E7EFEF52CC7A7F25",
+      "https://picpac.by/content/styles/common.css?v=639298175320000000",
+      "https://picpac.by/content/media.css?v=2CA163A717DDBBE71FD63E17113F55F9",
+      "https://picpac.by/content/theme-base.css?v=98DB3888ACC26A0AD35F7453BBAC0F74",
+      "https://picpac.by/content/theme-override.css?v=63483F4D1151D556C2A1425EE4B49D6F"
+    ],
+    "note": "No confirmed Futura PT 600/700 @font-face present in application stylesheets. No guessed asset URLs downloaded."
+  }
+}

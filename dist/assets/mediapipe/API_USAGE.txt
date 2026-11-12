@@ -1,0 +1,121 @@
+PicPac local vision resources — integration notes
+
+Pinned SDK: @mediapipe/tasks-vision 0.10.21 (published non-prerelease).
+The npm tarball SHA-512 was checked against registry metadata before extraction.
+The module, both WASM loaders/binaries and two models are self-hosted here.
+No image upload or Google service call is needed for this inference pipeline.
+Serve over HTTP(S); do not run from a file:// URL.
+
+INITIALIZATION (ES module)
+
+const assetBase = new URL('./assets/mediapipe/', document.baseURI);
+const { FilesetResolver, ImageSegmenter, FaceDetector } =
+  await import(new URL('vision_bundle.mjs', assetBase).href);
+const vision = await FilesetResolver.forVisionTasks(new URL('wasm', assetBase).href);
+
+const segmenter = await ImageSegmenter.createFromOptions(vision, {
+  baseOptions: {
+    modelAssetPath: new URL('selfie_segmenter.tflite', assetBase).href,
+    delegate: 'CPU'
+  },
+  runningMode: 'IMAGE',
+  outputConfidenceMasks: true,
+  outputCategoryMask: false
+});
+
+const labels = segmenter.getLabels();
+const personIndex = labels.findIndex(label =>
+  /^(selfie|person)$/i.test(label.trim()));
+if (personIndex < 0) throw new Error('Unrecognized segmentation model labels');
+
+let personMask;
+segmenter.segment(decodedImageOrCanvas, result => {
+  const mask = result.confidenceMasks?.[personIndex];
+  if (!mask) throw new Error('Missing person confidence mask');
+  personMask = {
+    width: mask.width,
+    height: mask.height,
+    values: mask.getAsFloat32Array().slice()
+  };
+});
+
+CONFIDENCE INDEX — IMPORTANT
+
+This exact downloaded SelfieSegmenter float16/1 model contains an embedded
+labels.txt with one line: "selfie". Its tensor shape is [1,256,256,1].
+For these pinned resources the expected getLabels() result is ["selfie"] and
+confidenceMasks[0] is the person mask. Use getLabels() to assert this at runtime.
+This asset task verified the metadata and implementation, not browser inference.
+
+Do NOT use confidenceMasks[1] on this model. The generalized overview describing
+background=0/person=1 does not describe this model's single-channel confidence
+output. The v0.10.21 calculator treats a one-channel model as foreground:
+categoryMask is 0 for foreground and 255 for unlabelled background (CPU code),
+not a two-channel probability array. Prefer the float confidence mask.
+
+The model consumes RGB [1,256,256,3], normalized to [0,1]. MediaPipe performs
+input preprocessing. Pass the decoded source image/canvas at its native aspect
+ratio; do not first distort it to 256x256. Use the returned mask width/height.
+Callback mask memory is valid only inside the callback. Copy it if retained.
+If using segment(image) without callback, call result.close() after use.
+Call segmenter.close() when disposing the instance.
+
+COMPOSITING
+
+The confidence value represents the foreground, so use it as source alpha
+(optionally a conservative smooth threshold after visual QA). Composite original
+RGB over white. Do not invert the mask and do not modify facial features.
+The model is not pixel-perfect, especially at hair, fingers and weak contrast.
+Keep the original and provide before/after review plus a route to retake/manual
+review. This model does not validate a passport or guarantee agency acceptance.
+
+FACE DETECTION (reuse the same vision FilesetResolver result)
+
+const detector = await FaceDetector.createFromOptions(vision, {
+  baseOptions: {
+    modelAssetPath: new URL('face_detector.tflite', assetBase).href,
+    delegate: 'CPU'
+  },
+  runningMode: 'IMAGE',
+  minDetectionConfidence: 0.5,
+  minSuppressionThreshold: 0.3
+});
+const { detections } = detector.detect(decodedImageOrCanvas);
+const oneFaceDetected = detections.length === 1;
+if (oneFaceDetected) {
+  const face = detections[0];
+  const score = face.categories[0]?.score;
+  const box = face.boundingBox;
+  // box.originX, box.originY, box.width, box.height are source-image pixels.
+  // face.keypoints contains six points normalized to image width/height.
+}
+
+BlazeFace short_range float16/1 input is RGB [1,128,128,3], float [-1,1].
+Raw outputs: regressors [1,896,16], classificators [1,896,1]. MediaPipe performs
+normalization and postprocessing; applications use detections, not raw tensors.
+score is detection confidence, not identity confidence or document acceptance.
+The model is designed for prominent, close faces (about 2 m or nearer). A result
+with one detection means one detectable face; it cannot prove no obscured/small
+face exists. The bounding box is a face box, not the top-of-hair/chin geometry
+required for a legally accurate document crop.
+
+LOADING / LICENSE
+
+FilesetResolver chooses the SIMD or no-SIMD runtime for the current browser.
+The two WASM binaries are about 9.6 MB each uncompressed; normally only one is
+loaded. Lazy-load on entry to the feature, reuse task instances, and display a
+loading/error state. Do not substitute a CDN/latest path at runtime.
+CPU avoids requiring the GPU delegate; browser rendering support is still needed.
+
+SDK and both models are Apache-2.0. LICENSE is the official license text from
+the v0.10.21 MediaPipe repository. Model cards explicitly state Apache-2.0 on
+page 1; they are retained as MODEL_CARD.pdf and FACE_MODEL_CARD.pdf. Preserve
+license and upstream copyright notices in redistribution. Model intended-use
+limitations are documented by their cards; neither model performs identity
+recognition. See SOURCES.json for exact URLs and SHA-256 hashes.
+
+OFFICIAL REFERENCES
+https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter/web_js
+https://ai.google.dev/edge/mediapipe/api/solutions/js/tasks-vision.imagesegmenter
+https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector
+https://raw.githubusercontent.com/google-ai-edge/mediapipe/v0.10.21/mediapipe/tasks/cc/vision/image_segmenter/calculators/tensors_to_segmentation_calculator.cc
