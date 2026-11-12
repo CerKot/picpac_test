@@ -38,13 +38,24 @@ function measures(result,canvas){
  const bounds=lm.slice(0,468),left=Math.min(...bounds.map(p=>p.x)),right=Math.max(...bounds.map(p=>p.x)),top=Math.min(...bounds.map(p=>p.y)),bottom=Math.max(...bounds.map(p=>p.y));
  return {faceCount:1,geometryAvailable:true,left,right,top,bottom,faceHeight:bottom-top,eyeX:(a.x+b.x)/2,eyeY:(a.y+b.y)/2,roll:Math.atan2((b.y-a.y)*canvas.height,(b.x-a.x)*canvas.width)*180/Math.PI,...poseFromMatrix(result.facialTransformationMatrixes?.[0]),blinkLeft:blends.eyeBlinkLeft,blinkRight:blends.eyeBlinkRight,mouthOpen:blends.jawOpen,smile:Math.max(blends.mouthSmileLeft??NaN,blends.mouthSmileRight??NaN),...lightMetrics(canvas,lm)};
 }
-export function inspectDocumentCanvas(canvas,{live=false,timestamp=performance.now()}={}){
+export function inspectDocumentCanvas(canvas,{live=false,timestamp=performance.now(),onStage=()=>{}}={}){
  const task=serial.catch(()=>{}).then(async()=>{
+  if(!live)await onStage('Загружаем проверку лица…');
   const model=await getRuntime(),next=live?'VIDEO':'IMAGE';if(mode!==next){await model.setOptions({runningMode:next});mode=next;}
+  if(!live)await onStage('Сканируем лицо, проверяем свет и резкость…');
   const result=live?model.detectForVideo(canvas,timestamp):model.detect(canvas);
   const metrics=measures(result,canvas),report=assessDocument(metrics,{live});
   return {report,landmarks:result.faceLandmarks?.length===1?result.faceLandmarks[0]:null,metrics};
  });serial=task;return task;
+}
+// Transient display coordinates only; never persisted with a document audit.
+export function scanFrameBounds(metrics,{mirror=false}={}){
+ if(metrics?.faceCount!==1||![metrics.left,metrics.right,metrics.top,metrics.bottom].every(Number.isFinite)||metrics.left>=metrics.right||metrics.top>=metrics.bottom)return null;
+ const clamp=v=>Math.max(.035,Math.min(.965,v));
+ const left=clamp((mirror?1-metrics.right:metrics.left)-.045),right=clamp((mirror?1-metrics.left:metrics.right)+.045);
+ const top=clamp(metrics.top-.045),bottom=clamp(metrics.bottom+.045);
+ if(right<=left||bottom<=top)return null;
+ return {left:left*100,top:top*100,width:(right-left)*100,height:(bottom-top)*100};
 }
 function drawOverlay(canvas,landmarks,report){
  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);if(!landmarks)return;
@@ -60,7 +71,7 @@ export async function startDocumentCameraValidator({video,overlay,ratio,onUpdate
   if(stopped)return;
   if(document.hidden||video.readyState<2||!video.videoWidth||now-last<250){raf=requestAnimationFrame(tick);return;}
   last=now;
-  try{drawCameraFrame(video,canvas,ratio);const {report,landmarks}=await inspectDocumentCanvas(canvas,{live:true,timestamp:performance.now()});if(stopped)return;drawOverlay(overlay,landmarks,report);onUpdate(report,gate.update(report,performance.now()));}
+  try{drawCameraFrame(video,canvas,ratio);const {report,landmarks,metrics}=await inspectDocumentCanvas(canvas,{live:true,timestamp:performance.now()});if(stopped)return;drawOverlay(overlay,landmarks,report);onUpdate(report,gate.update(report,performance.now()),metrics);}
   catch(error){if(!stopped){gate.reset();onError(error);}stopped=true;return;}
   if(!stopped)raf=requestAnimationFrame(tick);
  };

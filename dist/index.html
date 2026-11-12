@@ -1,3 +1,35 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#F6EFE6"><meta name="description" content="Сохраните важные моменты с PicPac. Фотопечать, фотокниги и фото на документы."><title>PicPac — ваши моменты рядом</title><link rel="icon" href="assets/logo.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><link rel="preload" href="assets/futura-pt-400.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/futura-pt-500.woff2" as="font" type="font/woff2" crossorigin></head>
-<body><a class="skip" href="#main">К содержимому</a><div class="app-shell"><main id="main" tabindex="-1"></main><nav id="navigation" aria-label="Главная навигация"></nav><button class="assistant-launch" id="assistant-launch" aria-label="Открыть помощника PicPac"></button></div><div id="overlay"></div><div id="toast" class="toast" role="status" aria-live="polite"></div><input id="photo-input" type="file" accept="image/*" multiple hidden><script type="module" src="app.js"></script><noscript>Для работы редактора PicPac включите JavaScript.</noscript></body></html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F8F3F3">
+  <script src="theme.js"></script>
+  <meta name="description" content="Сохраните важные моменты с PicPac. Фотопечать, фотокниги и фото на документы.">
+  <title>PicPac — ваши моменты рядом</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="document-scan.css">
+  <link rel="stylesheet" href="ai-glass.css">
+  <link rel="stylesheet" href="album-render.css">
+  <link rel="stylesheet" href="dark.css">
+  <link rel="preload" href="assets/futura-pt-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/futura-pt-500.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body>
+  <a class="skip" href="#main">К содержимому</a>
+  <div class="app-shell">
+    <main id="main" tabindex="-1"></main>
+    <nav id="navigation" aria-label="Главная навигация"></nav>
+    <button type="button" class="assistant-launch premium-surface" id="assistant-launch" aria-label="Открыть помощника PicPac AI" aria-controls="overlay" aria-expanded="false">
+      <img class="assistant-avatar" src="assets/picpac-ai-face.png" alt=""><span>PicPac AI</span>
+    </button>
+  </div>
+  <div id="overlay"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <input id="photo-input" type="file" accept="image/*" multiple hidden>
+  <script type="module" src="app.js"></script>
+  <noscript>Для работы редактора PicPac включите JavaScript.</noscript>
+</body>
+</html>

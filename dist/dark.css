@@ -1,0 +1,60 @@
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#201c29;--ink:#f4edf5;--muted:#c3b6c9;--line:#554963;
+  --pink:#482e3e;--lavender:#38304e;--sage:#2d403d;--red:#c96178;--red-dark:#ffabc3;
+  --glass-fill:#342b42c9;--glass-edge:#b7a1d14d;--glass-rim:#ffffff17;
+  --glass-light:linear-gradient(146deg,#f0dcff18,transparent 48%,#d9bbff0d);
+  --glass-shadow:0 12px 26px -15px #080612c7,inset 0 1px 1px #e6cfff32;
+  --ai-ink:#f0e8ff;--ai-muted:#cfc1ec;--ai-blue:#b6c5ff;--ai-violet:#dcb4ff;
+  --nav-selection-fill:#65506f;--nav-selection-shadow:inset 0 1px 1px #f5d7ff55,0 3px 14px #09071681;
+  --dark-surface:#30283c;--dark-raised:#3d324b;
+}
+[data-theme="dark"] body{background:radial-gradient(ellipse at 22% 10%,#3f2538,transparent 52%),radial-gradient(ellipse at 87% 63%,#29264a,transparent 57%),#1b1723}
+[data-theme="dark"] .app-shell{background:var(--paper)}
+[data-theme="dark"] main{background:radial-gradient(ellipse 115% 410px at 98% 0%,#472d438c,transparent 92%),radial-gradient(ellipse 105% 520px at 2% 55%,#34295483,transparent 95%),radial-gradient(ellipse 100% 580px at 100% 100%,#2141417d,transparent 88%)}
+[data-theme="dark"] .logo{filter:brightness(0) invert(1) brightness(.94)}
+[data-theme="dark"] .hero h1{color:var(--ink)}
+[data-theme="dark"] :is(.category-row,.create-card,.banner,.ai-tool).pink{background-color:var(--pink)}
+[data-theme="dark"] :is(.category-row,.create-card,.banner,.ai-tool).lavender{background-color:var(--lavender)}
+[data-theme="dark"] :is(.category-row,.create-card,.banner,.ai-tool).sage{background-color:var(--sage)}
+[data-theme="dark"] :is(.peach,.category-row.peach,.create-card.peach,.banner.peach,.ai-tool.peach){background-color:#483630}
+[data-theme="dark"] .yellow{background-color:#4b3e28}
+[data-theme="dark"] :is(.hero,.validator-idle,.product-art){border-color:var(--glass-edge);box-shadow:inset 0 1px 1px #ffffff28}
+[data-theme="dark"] :is(.product-card .product-art,.product-card .favorite,.product-art>.icon,.template-card .tag,.tag,.skip){background-color:var(--dark-raised);color:var(--ink)}
+[data-theme="dark"] :is(.category-row p,.banner .text-button,.doc-policy,.doc-option p,.validation-summary .audit-hint,.prepare-heading .eyebrow,.check-label,.legal-note,.ai-preview-note,.agent-privacy){color:var(--muted)}
+[data-theme="dark"] :is(.row-list,.account-stat,.cart-line,.quantity button,.photo-tile,.add-tile,.doc-icon,.instruction>span,.segmented button.active,.delivery-option.selected,.validator-idle,.live-feedback,.validation-heading>span,.prepare-heading>span:not(.premium-gem),.prepare-features>span,.scan-steps>span,.auto-capture-option,.gallery-privacy,.portrait-corrections>span,.live-check-chips>span,.offline){
+  background-color:var(--dark-raised);border-color:var(--glass-edge);color:var(--ink);
+}
+[data-theme="dark"] :is(.row-item,.outline,.add-tile,.ai-preview-heading>span,.sheet-handle){border-color:var(--glass-edge)}
+[data-theme="dark"] :is(.row-item>.icon:first-child,.document-preset>.icon,.validator-idle span,.live-feedback span,.prepare-card .check-label small,.auto-capture-option small,.check-badge,.success-text){color:#bfe1cd}
+[data-theme="dark"] :is(.soft-note.success,.validation-summary.ready,.live-feedback.ready,.validation-summary.ready .validation-heading>span,.live-check-chips>span.pass,.status,.success-icon){background-color:#26483d;color:#c5efda}
+[data-theme="dark"] :is(.soft-note.warn,.doc-check.pending,.status.review){background-color:#4f3b2c;color:#ffdfb7}
+[data-theme="dark"] :is(.status.changes,.live-check-chips>span.fail){background-color:#512c3c;color:#ffd0dd}
+[data-theme="dark"] :is(.error-text,.danger){color:#ffb1c6}
+[data-theme="dark"] :is(.sheet,.sticky-action){background-color:#292237ed}
+[data-theme="dark"] .sheet-handle{background-color:#80718a}
+[data-theme="dark"] :is(.form-field :is(input:not([type="checkbox"]),select,textarea),.inline-form input,.chat-form input,.agent-composer input,select){
+  background:var(--dark-surface);color:var(--ink);border-color:var(--glass-edge);box-shadow:inset 0 1px 3px #0003;
+}
+[data-theme="dark"] :is(.search-box input,.catalog-tools select){color:var(--ink);background:transparent}
+[data-theme="dark"] :is(input,textarea)::placeholder{color:#ac9eb6}
+[data-theme="dark"] :is(button,a,input,select,textarea,summary):focus-visible{outline-color:#b9a9ff}
+[data-theme="dark"] #navigation{background-color:#2a2236ed;box-shadow:0 15px 30px #09061280,inset 0 1px 1px #e6cfff35}
+[data-theme="dark"] #navigation button{color:#d3c5df}
+[data-theme="dark"] #navigation button.active{color:#fff1ff}
+[data-theme="dark"] :is(.ai-home-invite,.ai-hero){
+  border-color:var(--glass-edge);
+  background:radial-gradient(ellipse at 90% 40%,#9c84bdb3,transparent 46%),linear-gradient(126deg,#242f52,#3c2b5e 66%,#4f3067);
+}
+[data-theme="dark"] :is(.ai-kicker,.ai-catalog-tab,.ai-invite-button,.ai-chat-button,.create-tab,.ai-tool.active,.agent-callout .text-button,.album-customize summary,.ai-undo-row .text-button,.ai-theme-icon,.studio-ai-card p,.studio-ai-comparison figcaption,.studio-ai-status:not(:empty)){color:var(--ai-muted)}
+[data-theme="dark"] :is(.ai-invite-button,.ai-chat-button,.create-tab.active,.ai-preview-heading>span,.ai-module-icon,.ai-theme.selected,.agent-reply,.agent-chips .chip,.suggestions.agent-chips button){
+  background:var(--dark-raised);border-color:var(--glass-edge);color:var(--ink);box-shadow:var(--glass-shadow);
+}
+[data-theme="dark"] :is(.assistant-sheet,.chat-header.glass,.agent-callout,.studio-ai-card){background-color:#35294c}
+[data-theme="dark"] .assistant-sheet{background-image:radial-gradient(ellipse at 95% 0%,#62528c66,transparent 46%),var(--glass-light)}
+[data-theme="dark"] :is(.chat-messages .bubble,.chat-messages .bubble.user,.chat-messages .bubble button){
+  background:var(--dark-raised);color:var(--ink);border-color:var(--glass-edge);box-shadow:var(--glass-shadow);
+}
+[data-theme="dark"] .chat-messages .bubble.user{background:#473561}
+[data-theme="dark"] :is(.validator-idle,.scanning-summary,.experimental-preparation){background:var(--dark-surface);border-color:var(--glass-edge)}
+[data-theme="dark"] .print-preview{color:#252b29;color-scheme:light}

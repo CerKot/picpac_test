@@ -27,9 +27,10 @@ export function projectPrice(p){
  const unit=p.type==='prints'?({'10×15':1.3,'15×20':1.6,'20×30':3.2,'30×45':20}[p.format]||1.3):p.type==='docs'?12:p.type==='gifts'?3.5:(products.find(x=>x.id===p.productId)?.from||70);
  return Math.round(unit*(p.type==='prints'?p.photos.reduce((n,x)=>n+(x.copies||1),0):1)*100)/100;
 }
+export const normalizePromo=value=>String(value??'').normalize('NFKC').replace(/[\s\u200b-\u200d\ufeff]+/g,'').toUpperCase();
 export function totals(cart,promo='',delivery='pickup'){
  const subtotal=Math.round(cart.reduce((n,x)=>n+x.price*x.quantity,0)*100)/100;
- const discount=promo==='PIC10'?Math.round(subtotal*.1*100)/100:0;
+ const discount=normalizePromo(promo)==='PIC10'?Math.round(subtotal*.1*100)/100:0;
  const shipping=delivery==='pickup'?0:delivery==='post'?(subtotal-discount>=150?0:5.9):12;
  return {subtotal,discount,shipping,total:Math.round((subtotal-discount+shipping)*100)/100};
 }

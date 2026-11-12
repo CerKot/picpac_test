@@ -1,5 +1,5 @@
 // Product heuristics for capture assistance, not legal/ICAO certification.
-export const VALIDATOR_VERSION='picpac-cv-1';
+export const VALIDATOR_VERSION='picpac-cv-2';
 const check=(id,label,status,message)=>({id,label,status,message});
 export function assessDocument(m,{live=false}={}){
  const checks=[];
@@ -12,7 +12,8 @@ export function assessDocument(m,{live=false}={}){
   const vertical=m.eyeY<.28||m.eyeY>.49,horizontal=Math.abs(m.eyeX-.5)>.12;
   add('position','Положение в кадре',vertical||horizontal,vertical?(live?(m.eyeY<.28?'Чуть приподнимите камеру, сохраняя голову прямо.':'Немного опустите камеру, сохраняя голову прямо.'):'Расположите глаза ближе к линии в кадре: измените кадрирование или снимок.'):'Сместите лицо к центру овала.');
   const yaw=Math.abs(m.yaw),pitch=Math.abs(m.pitch),roll=Math.abs(m.roll);
-  add('pose','Лицо прямо к камере',!Number.isFinite(yaw+pitch+roll)||yaw>13||pitch>14||roll>8,yaw>13?'Поверните лицо полностью к камере. Должны быть видны обе стороны лица.':roll>8?'Выпрямите голову: линия глаз должна быть горизонтальной.':'Держите телефон на уровне глаз и смотрите прямо.');
+  const rollLimit=live?3:2.5,correctable=!live&&Number.isFinite(yaw+pitch+roll)&&yaw<=13&&pitch<=14&&roll>rollLimit&&roll<=12;
+  add('pose','Лицо прямо к камере',!Number.isFinite(yaw+pitch+roll)||yaw>13||pitch>14||roll>rollLimit,yaw>13?'Поверните лицо полностью к камере. Должны быть видны обе стороны лица.':roll>rollLimit?(correctable?'Небольшой наклон: выровняем линию глаз при обработке.':'Выпрямите голову: линия глаз должна быть горизонтальной.'):'Держите телефон на уровне глаз и смотрите прямо.',correctable);
   add('eyes','Открытые глаза',!Number.isFinite(m.blinkLeft+m.blinkRight)||Math.max(m.blinkLeft,m.blinkRight)>.55,'Откройте оба глаза и смотрите в объектив. Уберите волосы с глаз.');
   add('expression','Спокойное выражение',!Number.isFinite(m.mouthOpen+m.smile)||m.mouthOpen>.22||m.smile>.48,'Мягко сомкните губы и расслабьте лицо. Для документа нужна нейтральная мимика.');
   const dark=m.blackRatio>.65,bright=m.whiteRatio>.5,uneven=Math.abs(m.leftLuma-m.rightLuma)>42&&Math.max(m.leftLuma,m.rightLuma)/Math.max(1,Math.min(m.leftLuma,m.rightLuma))>1.8;
@@ -35,7 +36,7 @@ export class CaptureStability {
  constructor(){this.reset();}
  reset(){this.since=null;this.last=-Infinity;this.report=null;this.hint='Расположите лицо в овале.';this.candidate='';this.count=0;}
  update(report,now){
-  if(now-this.last>800)this.since=null;
+  if(now-this.last>1500)this.since=null;
   this.last=now;this.report=report;
   if(!report.canCapture)this.since=null;else if(this.since===null)this.since=now;
   if(this.candidate===report.hint)this.count++;else{this.candidate=report.hint;this.count=1;}
@@ -43,4 +44,18 @@ export class CaptureStability {
   return {hint:this.hint,stable:this.canCapture(now),progress:this.since===null?0:Math.min(1,(now-this.since)/1100)};
  }
  canCapture(now){return !!this.report?.canCapture&&this.since!==null&&now-this.since>=1100&&now-this.last<700;}
+}
+// A single-shot latch. Poor/uncertain results, pauses and disabled auto mode cancel the countdown.
+export class AutoCaptureGate {
+ constructor({holdMs=2000,maxGapMs=1500}={}){this.holdMs=holdMs;this.maxGapMs=maxGapMs;this.reset();}
+ reset(){this.since=null;this.last=-Infinity;this.fired=false;}
+ update(report,now,{enabled=true,visible=true}={}){
+  if(this.fired)return {trigger:false,progress:1,remaining:0};
+  if(!enabled||!visible||!report?.ready||now-this.last>this.maxGapMs)this.since=null;
+  this.last=now;
+  if(!enabled||!visible||!report?.ready)return {trigger:false,progress:0,remaining:0};
+  this.since??=now;const elapsed=Math.max(0,now-this.since),trigger=elapsed>=this.holdMs;
+  if(trigger)this.fired=true;
+  return {trigger,progress:Math.min(1,elapsed/this.holdMs),remaining:Math.max(0,Math.ceil((this.holdMs-elapsed)/1000))};
+ }
 }

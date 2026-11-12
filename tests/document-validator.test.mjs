@@ -1,9 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessDocument,CaptureStability,documentSignature,documentAuditGate} from '../dist/document-quality.js';
-import {poseFromMatrix} from '../dist/document-validator.js';
+import {poseFromMatrix,scanFrameBounds} from '../dist/document-validator.js';
 import {makeOrder} from '../dist/data.js';
 const neutral={faceCount:1,geometryAvailable:true,top:.12,bottom:.68,left:.25,right:.75,faceHeight:.56,eyeX:.5,eyeY:.37,yaw:0,pitch:0,roll:0,blinkLeft:.05,blinkRight:.04,mouthOpen:.02,smile:.05,meanLuma:145,leftLuma:142,rightLuma:148,blackRatio:0,whiteRatio:0,sharpness:90};
+test('Scanner follows an off-centre face in mirrored preview and stays within the frame',()=>{
+ const face={faceCount:1,left:.1,right:.4,top:.2,bottom:.7};
+ const direct=scanFrameBounds(face),mirror=scanFrameBounds(face,{mirror:true});
+ assert.ok(Math.abs(direct.left-5.5)<1e-9);assert.ok(Math.abs(mirror.left-55.5)<1e-9);
+ assert.ok(Math.abs(direct.width-mirror.width)<1e-9);assert.equal(direct.top,mirror.top);
+ const clipped=scanFrameBounds({...face,left:-.1,top:-.2,right:1.1,bottom:1.2});
+ assert.ok(Math.abs(clipped.left-3.5)<1e-9);assert.ok(clipped.left+clipped.width<=96.5);assert.ok(clipped.top+clipped.height<=96.5);
+ for(const invalid of [null,{...face,faceCount:0},{...face,faceCount:2},{...face,left:NaN},{...face,right:.05},{...face,top:2,bottom:3}])assert.equal(scanFrameBounds(invalid),null);
+});
 test('Capture guidance distinguishes absent, multiple, distant, close and rotated faces',()=>{
  assert.equal(assessDocument(neutral).ready,true);
  for(const values of [{faceCount:0},{faceCount:2},{faceHeight:.2},{faceHeight:.82},{yaw:30},{pitch:25},{roll:15},{blinkLeft:.8},{mouthOpen:.6}])assert.equal(assessDocument({...neutral,...values}).canCapture,false,JSON.stringify(values));

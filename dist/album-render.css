@@ -1,0 +1,45 @@
+/* Used by the AI preview, the saved book editor and the portable book export. */
+.album-cover,.album-spread{
+  box-sizing:border-box;min-width:0;overflow:hidden;break-inside:avoid;
+  color:var(--album-ink,#28203e);background-color:var(--album-paper,#dedbf7);
+  border:1px solid #ffffffcc;border-radius:19px;
+  box-shadow:0 9px 21px -14px #3b2c57aa,inset 0 1px 0 #fff;
+}
+.album-cover *,.album-spread *{box-sizing:border-box;min-width:0}
+.album-cover img,.album-spread img{
+  display:block;width:100%;height:100%;min-height:0;min-width:0;object-fit:cover;border-radius:9px;
+}
+.album-cover{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:12px;padding:12px;aspect-ratio:1.56;
+  background-image:linear-gradient(136deg,#fff3,transparent 54%,#39204210);
+}
+.album-cover.cover-type{grid-template-columns:1fr;place-items:center;text-align:center}
+.album-cover.cover-type .album-cover-copy{max-width:85%;padding:10px;border:1px solid currentColor;border-radius:4px}
+.album-cover-media{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:4px;min-height:0}
+.cover-collage .album-cover-media{grid-template-columns:repeat(2,minmax(0,1fr))}
+.album-cover-copy,.album-page-copy{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:3px;overflow-wrap:anywhere}
+.album-cover-copy h3,.album-page-copy h3{font:700 clamp(17px,5vw,27px)/1.03 system-ui,sans-serif;letter-spacing:-.04em;margin:0}
+.type-serif :is(.album-cover-copy,.album-page-copy) h3{font-family:Georgia,serif}
+.type-italic :is(.album-cover-copy,.album-page-copy) h3{font-family:Georgia,serif;font-style:italic;font-weight:400}
+.album-cover-copy span,.album-page-copy span{font:700 9px/1.15 system-ui,sans-serif;letter-spacing:.12em}
+.album-cover-copy p,.album-page-copy p,.album-page>p{font-size:13px;line-height:1.15;margin:0;overflow-wrap:anywhere}
+.album-spread{
+  position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:2px;aspect-ratio:1.85;padding:7px;
+}
+.album-page{
+  overflow:hidden;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;
+  gap:5px;background:#fff4;padding:8px;border-radius:10px;
+}
+.album-page>p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.album-page-copy{align-self:center;padding-inline:8px}
+.album-page-copy h3{font-size:clamp(16px,4.5vw,24px)}
+.layout-story .album-page-copy{border-top:1px solid currentColor;padding-top:10px}
+.album-empty-image{background:#ffffff52;border:1px dashed #ffffffd9;border-radius:9px;display:grid;place-items:center;min-height:0}
+.album-empty-image .icon{width:25px;height:25px}
+.book-design-preview{margin:19px 0 13px}
+@media(max-width:365px){
+  .album-cover{padding:9px;gap:6px}
+  .album-page-copy,.album-page{padding:5px}
+}

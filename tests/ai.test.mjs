@@ -7,7 +7,23 @@ import {createHmac} from 'node:crypto';
 import {albumProgress,projectReadiness,documentPolicy,selectedDocumentPhoto} from '../dist/project-rules.js';
 import {blendForeground} from '../dist/portrait.js';
 import {validateGeneration,configured,runModel} from '../api/model-gateway.mjs';
-import {ImageJobService,verifySession} from '../api/service.mjs';
+import {ImageJobService,verifySession,issueGuestSession} from '../api/service.mjs';
+
+test('AIAI adapter keeps the key on the server and accepts a bounded image response',async()=>{
+ const env={PICPAC_AI_ENABLED:'true',PICPAC_AUTH_SECRET:'a'.repeat(32),PICPAC_AIAI_API_KEY:'server-secret'};
+ assert.equal(configured(env),true);
+ const payload=Buffer.from([255,216,255,1,2]);let requested;
+ const result=await runModel({operation:'art.generate',prompt:'Album illustration',references:[]},env,async(url,options)=>{
+  requested={url,headers:options.headers,body:JSON.parse(options.body)};
+  return {ok:true,arrayBuffer:async()=>Buffer.from(JSON.stringify({data:[{b64_json:payload.toString('base64')}]}))};
+ });
+ assert.equal(requested.url,'https://api.aiai.by/v1/images/generations');
+ assert.equal(requested.body.model,'flux-1-kontext-pro');
+ assert.equal(requested.body.prompt,'Album illustration');
+ assert.deepEqual(result.bytes,payload);
+ assert.equal(result.mimeType,'image/jpeg');
+ await assert.rejects(runModel({operation:'photo.edit',prompt:'Edit',references:[]},env,async()=>{throw Error('should not call provider');}),/только новую иллюстрацию/);
+});
 
 test('Three distinct uploaded originals are required; demos, duplicate hashes and generated images do not count',()=>{
  const p={type:'books',photos:[{id:'a',contentHash:'one'},{id:'b',contentHash:'one'},{id:'c',demo:true},{id:'d',generated:true}]};
@@ -41,6 +57,20 @@ test('Signed sessions require issuer, audience, expiry and tamper-proof signatur
  assert.equal(verifySession('Bearer '+h+'.'+p+'.'+s,secret,now),'test-user');
  assert.throws(()=>verifySession('Bearer '+h+'.'+p+'.'+s+'bad',secret,now),/Войдите/);
  assert.throws(()=>verifySession('Bearer '+h+'.'+p+'.'+s,secret,now+700000),/Войдите/);
+});
+test('Guest session is signed and the server-wide daily limit bounds paid calls',async()=>{
+ const secret='guest-secret-'.repeat(4),user=verifySession('Bearer '+issueGuestSession(secret),secret);
+ assert.match(user,/^[a-f0-9]{32}$/);
+ const directory=await mkdtemp(path.join(tmpdir(),'picpac-ai-'));let calls=0;
+ const env={PICPAC_AI_ENABLED:'true',PICPAC_AUTH_SECRET:secret,PICPAC_AIAI_API_KEY:'test-only',PICPAC_GLOBAL_DAILY_JOB_LIMIT:'1'};
+ const service=new ImageJobService({env,directory,runner:async()=>{calls++;return {bytes:Buffer.from([255,216,255]),model:'test'};}});
+ try{
+  const input={operation:'art.generate',prompt:'Quiet watercolor garden',references:[],consent:true};
+  await service.create(user,input,'first-job-key-123456');
+  await assert.rejects(service.create('another-guest',input,'second-job-key-123456'),/Лимит генераций на сегодня/);
+  for(let i=0;i<30&&calls<1;i++)await new Promise(r=>setTimeout(r,10));
+  assert.equal(calls,1);
+ }finally{await service.write;await rm(directory,{recursive:true,force:true});}
 });
 test('Job ledger prevents duplicate provider calls, rejects key conflicts and isolates owners',async()=>{
  const directory=await mkdtemp(path.join(tmpdir(),'picpac-ai-'));let calls=0,release;
